@@ -9,7 +9,10 @@ export default function LoginScreen({ navigation }: any) {
   return (
     <View style={[globalStyles.mainContainer, styles.container]}>
       <Logo />
-      <Text style={styles.title}>TaskHub</Text>
+      <View style={{ flexDirection: "row", gap: 10 }}>
+        <Text style={styles.title}>ToDo</Text>
+        <Text style={[styles.title, { color: Colors.primary }]}>List</Text>
+      </View>
       <Text style={styles.subtitle}>
         Gestión de tareas en tiempo real con autenticación y sincronización.
       </Text>
@@ -19,7 +22,7 @@ export default function LoginScreen({ navigation }: any) {
           No tienes una cuenta?
         </Text>
         <Text
-          onPress={() => navigation.navigate("Register")}
+          onPress={() => navigation.replace("Register")}
           style={{ color: Colors.primary }}
         >
           Regístrate
@@ -31,7 +34,7 @@ export default function LoginScreen({ navigation }: any) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 40,
+    paddingTop: 40,
     alignItems: "center",
   },
   title: {

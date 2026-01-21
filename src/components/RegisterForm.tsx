@@ -1,28 +1,29 @@
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import React from "react";
 import { globalStyles } from "../css/styles";
 import CustomButton from "./CustomButton";
-import { Colors } from "../constants/colors";
 
-interface LoginProps {
+interface RegisterProps {
   navigation: any;
 }
 
-export default function LoginForm({ navigation }: LoginProps) {
+export default function RegisterForm({ navigation }: RegisterProps) {
   return (
     <View style={styles.container}>
+      <View style={globalStyles.inputContainer}>
+        <Text style={globalStyles.inputLabel}>Nombre Completo</Text>
+        <TextInput style={globalStyles.input} placeholder="Nombre Completo" />
+      </View>
       <View style={globalStyles.inputContainer}>
         <Text style={globalStyles.inputLabel}>Email</Text>
         <TextInput
           style={globalStyles.input}
           placeholder="usuario@correo.com"
         />
+      </View>
+      <View style={globalStyles.inputContainer}>
+        <Text style={globalStyles.inputLabel}>Edad</Text>
+        <TextInput style={globalStyles.input} placeholder="Edad" />
       </View>
       <View style={globalStyles.inputContainer}>
         <Text style={globalStyles.inputLabel}>Contraseña</Text>
@@ -32,15 +33,18 @@ export default function LoginForm({ navigation }: LoginProps) {
           secureTextEntry={true}
         />
       </View>
-      <TouchableOpacity onPress={() => {}}>
-        <Text style={{ textAlign: "right", color: Colors.textSecondary }}>
-          ¿Olvidaste tu contraseña?
-        </Text>
-      </TouchableOpacity>
+      <View style={globalStyles.inputContainer}>
+        <Text style={globalStyles.inputLabel}>Confirmar Contraseña</Text>
+        <TextInput
+          style={globalStyles.input}
+          placeholder="* * * * * *"
+          secureTextEntry={true}
+        />
+      </View>
       <View style={{ marginVertical: 20 }}>
         <CustomButton
-          title="Iniciar sesión"
-          onPress={() => navigation.navigate("Home")}
+          title="Crear cuenta"
+          onPress={() => navigation.replace("Login")}
         />
       </View>
     </View>
