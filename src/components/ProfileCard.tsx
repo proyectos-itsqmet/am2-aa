@@ -1,18 +1,43 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import Avatar from "./Avatar";
 import { Colors } from "../constants/colors";
 import CustomButton from "./CustomButton";
+import { UserType } from "../types/User";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "../firebase/config";
 
 interface ProfileCardProps {
   navigation?: any;
+  user: UserType | undefined;
 }
 
-export default function ProfileCard({ navigation }: ProfileCardProps) {
+export default function ProfileCard({ user }: ProfileCardProps) {
+  function passwordReset() {
+    if (user?.email === undefined) {
+      Alert.alert(
+        "Error",
+        "No se pudo restablecer la contraseña. Correo electrónico no disponible.",
+      );
+      return;
+    }
+
+    sendPasswordResetEmail(auth, user?.email)
+      .then(() => {
+        Alert.alert(
+          "Éxito",
+          "Por favor revisa tu correo para restablecer tu contraseña.",
+        );
+      })
+      .catch((error) => {
+        Alert.alert("Error", error.message);
+      });
+  }
+
   return (
     <View style={styles.container}>
       <View style={{ flexDirection: "row", gap: 20, alignItems: "center" }}>
-        <Avatar size={80} navigation={navigation} />
+        <Avatar size={80} />
         <View>
           <Text
             style={{
@@ -21,7 +46,7 @@ export default function ProfileCard({ navigation }: ProfileCardProps) {
               color: Colors.textPrimary,
             }}
           >
-            John Doe
+            {user?.name}
           </Text>
           <Text
             style={{
@@ -30,7 +55,7 @@ export default function ProfileCard({ navigation }: ProfileCardProps) {
               color: Colors.textPrimary,
             }}
           >
-            Correo: jdoe@correo.com
+            Correo: {user?.email}
           </Text>
           <Text
             style={{
@@ -39,13 +64,13 @@ export default function ProfileCard({ navigation }: ProfileCardProps) {
               color: Colors.textPrimary,
             }}
           >
-            Edad: 32 Años
+            Edad: {user?.age} Años
           </Text>
         </View>
       </View>
       <CustomButton
         title="Restablecer contraseña"
-        onPress={() => {}}
+        onPress={passwordReset}
         backgroundColor={Colors.blue}
       />
     </View>

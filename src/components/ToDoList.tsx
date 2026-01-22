@@ -3,32 +3,11 @@ import React from "react";
 import { ToDoType } from "../types/ToDoType";
 import ToDoItem from "./ToDoItem";
 
-const data: ToDoType[] = [
-  {
-    id: "1",
-    title: "Comprar víveres",
-    completed: false,
-    createdAt: new Date(),
-    priority: "Media",
-  },
-  {
-    id: "2",
-    title: "Llevar el auto al taller",
-    completed: true,
-    createdAt: new Date(),
-    completedAt: new Date(),
-    priority: "Alta",
-  },
-  {
-    id: "3",
-    title: "Ir al cine con amigos",
-    completed: false,
-    createdAt: new Date(),
-    priority: "Baja",
-  },
-];
+interface ToDoListProps {
+  data?: ToDoType[];
+}
 
-export default function ToDoList() {
+export default function ToDoList({ data }: ToDoListProps) {
   return (
     <FlatList
       data={data}

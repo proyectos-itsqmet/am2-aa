@@ -3,12 +3,11 @@ import React from "react";
 import { Colors } from "../constants/colors";
 
 interface AvatarProps {
-  navigation: any;
   size: number;
   onPress?: () => void;
 }
 
-export default function Avatar({ navigation, size, onPress }: AvatarProps) {
+export default function Avatar({ size, onPress }: AvatarProps) {
   return (
     <TouchableOpacity
       style={[styles.avatar, { width: size, height: size }]}

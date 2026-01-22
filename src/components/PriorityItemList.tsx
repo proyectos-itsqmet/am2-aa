@@ -6,12 +6,26 @@ import { PriorityType } from "../types/PriorityType";
 
 interface PriorityItemListProps {
   item: PriorityType;
+  isSelected?: boolean;
+  onPress?: () => void;
 }
 
-export default function PriorityItemList({ item }: PriorityItemListProps) {
+export default function PriorityItemList({
+  item,
+  isSelected,
+  onPress,
+}: PriorityItemListProps) {
   return (
     <TouchableOpacity
-      style={[styles.container, { backgroundColor: item.backgroundColor }]}
+      onPress={onPress}
+      style={[
+        styles.container,
+        {
+          backgroundColor: item.backgroundColor,
+          borderColor: item.borderColor,
+        },
+        isSelected && styles.selected,
+      ]}
     >
       {item.priority === "Alta" ? (
         <MaterialIcons
@@ -41,5 +55,8 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingLeft: 12,
     paddingRight: 16,
+  },
+  selected: {
+    borderWidth: 2,
   },
 });

@@ -7,6 +7,7 @@ interface ButtonProps {
   onPress: () => void;
   backgroundColor?: string;
   icon?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export default function CustomButton({
@@ -14,11 +15,17 @@ export default function CustomButton({
   onPress,
   backgroundColor,
   icon,
+  disabled,
 }: ButtonProps) {
   return (
     <TouchableOpacity
+      disabled={disabled ?? false}
       onPress={onPress}
-      style={[styles.container, backgroundColor && { backgroundColor }]}
+      style={[
+        styles.container,
+        disabled && { backgroundColor: Colors.softGray },
+        backgroundColor && { backgroundColor },
+      ]}
     >
       {icon}
       {title && <Text style={styles.title}>{title}</Text>}

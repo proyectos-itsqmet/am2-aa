@@ -1,18 +1,71 @@
-import { Modal, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableWithoutFeedback,
+} from "react-native";
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import CustomButton from "./CustomButton";
 import { Colors } from "../constants/colors";
 import { globalStyles } from "../css/styles";
 import { FontAwesome } from "@expo/vector-icons";
 import PriorityList from "./PriorityList";
+import { set, ref as dbRef } from "firebase/database";
+import { db } from "../firebase/config";
 
-const BottomSheetModal = forwardRef((props, ref) => {
+interface BottomSheetModalProps {
+  onPress?: () => void;
+  onClose?: (value: true | null) => void;
+  uid?: string;
+}
+
+const BottomSheetModal = forwardRef((props: BottomSheetModalProps, ref) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [title, setTitle] = useState("");
+  const [priority, setPriority] = useState("baja");
 
   useImperativeHandle(ref, () => ({
     open: () => setModalVisible(true),
-    close: () => setModalVisible(false),
+    close: () => {
+      setModalVisible(false);
+      props.onClose?.(null);
+      setTitle("");
+      setPriority("baja");
+    },
   }));
+
+  async function postTodo(uid: string): Promise<boolean> {
+    try {
+      await set(dbRef(db, "todoList/" + uid), {
+        id: 2,
+        title: title,
+        completed: false,
+        createdAt: new Date().toString(),
+        completedAt: null,
+        priority: priority,
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error al agregar todo: ", error);
+      return false;
+    }
+  }
+
+  const onSubmit = async () => {
+    if (title.trim() && props.uid) {
+      const success = await postTodo(props.uid);
+
+      if (success) {
+        props.onClose?.(true);
+        setModalVisible(false);
+        setTitle("");
+        setPriority("baja");
+      }
+    }
+  };
 
   return (
     <Modal
@@ -23,27 +76,42 @@ const BottomSheetModal = forwardRef((props, ref) => {
         setModalVisible(!modalVisible);
       }}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-            <TextInput
-              style={[globalStyles.input, { flex: 1 }]}
-              placeholder="Agregar una tarea"
-            />
-            <CustomButton
-              onPress={() => setModalVisible(false)}
-              backgroundColor={Colors.green}
-              icon={<FontAwesome name="send" size={20} color={Colors.white} />}
-            />
-          </View>
-          <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-            <Text style={{ color: Colors.textPrimary, fontWeight: "bold" }}>
-              Prioridad:
-            </Text>
-            <PriorityList />
-          </View>
+      <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+        <View style={styles.centeredView}>
+          <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+            <View style={styles.modalView}>
+              <View
+                style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
+              >
+                <TextInput
+                  style={[globalStyles.input, { flex: 1 }]}
+                  placeholder="Agregar una tarea"
+                  value={title}
+                  onChangeText={setTitle}
+                />
+                <CustomButton
+                  onPress={onSubmit}
+                  backgroundColor={Colors.green}
+                  icon={
+                    <FontAwesome name="send" size={20} color={Colors.white} />
+                  }
+                />
+              </View>
+              <View
+                style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
+              >
+                <Text style={{ color: Colors.textPrimary, fontWeight: "bold" }}>
+                  Prioridad:
+                </Text>
+                <PriorityList
+                  onSelectPriority={setPriority}
+                  selectedPriority={priority}
+                />
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 });
@@ -59,7 +127,8 @@ const styles = StyleSheet.create({
   },
   modalView: {
     backgroundColor: "white",
-    borderRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     gap: 20,
     paddingVertical: 40,
     paddingHorizontal: 20,
