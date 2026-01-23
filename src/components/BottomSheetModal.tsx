@@ -14,17 +14,19 @@ import { FontAwesome } from "@expo/vector-icons";
 import PriorityList from "./PriorityList";
 import { set, ref as dbRef } from "firebase/database";
 import { db } from "../firebase/config";
+import { ToDoType } from "../types/ToDoType";
 
 interface BottomSheetModalProps {
   onPress?: () => void;
   onClose?: (value: true | null) => void;
   uid?: string;
+  todos: ToDoType[];
 }
 
 const BottomSheetModal = forwardRef((props: BottomSheetModalProps, ref) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState("");
-  const [priority, setPriority] = useState("baja");
+  const [priority, setPriority] = useState("Baja");
 
   useImperativeHandle(ref, () => ({
     open: () => setModalVisible(true),
@@ -32,19 +34,24 @@ const BottomSheetModal = forwardRef((props: BottomSheetModalProps, ref) => {
       setModalVisible(false);
       props.onClose?.(null);
       setTitle("");
-      setPriority("baja");
+      setPriority("Baja");
     },
   }));
 
   async function postTodo(uid: string): Promise<boolean> {
     try {
       await set(dbRef(db, "todoList/" + uid), {
-        id: 2,
-        title: title,
-        completed: false,
-        createdAt: new Date().toString(),
-        completedAt: null,
-        priority: priority,
+        todos: [
+          {
+            id: props.todos.length,
+            title: title,
+            completed: false,
+            createdAt: new Date().toString(),
+            completedAt: null,
+            priority: priority,
+          },
+          ...props.todos,
+        ],
       });
 
       return true;
@@ -62,7 +69,7 @@ const BottomSheetModal = forwardRef((props: BottomSheetModalProps, ref) => {
         props.onClose?.(true);
         setModalVisible(false);
         setTitle("");
-        setPriority("baja");
+        setPriority("Baja");
       }
     }
   };

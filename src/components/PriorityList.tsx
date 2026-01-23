@@ -20,8 +20,8 @@ export default function PriorityList({
       renderItem={({ item }) => (
         <PriorityItemList
           item={item}
-          isSelected={selectedPriority === item.type}
-          onPress={() => onSelectPriority?.(item.type)}
+          isSelected={selectedPriority === item.priority}
+          onPress={() => onSelectPriority?.(item.priority)}
         />
       )}
     />

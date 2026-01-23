@@ -1,20 +1,28 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import { Colors } from "../constants/colors";
+import { useTheme } from "../context/ThemeContext";
 
 interface FilterButtonProps {
   title: string;
   selected: string;
+  onPress?: () => void;
 }
 
-export default function FilterButton({ title, selected }: FilterButtonProps) {
+export default function FilterButton({
+  title,
+  selected,
+  onPress,
+}: FilterButtonProps) {
+  const { colors } = useTheme();
+
   return (
     <TouchableOpacity
+      onPress={onPress}
       style={[
         styles.container,
         {
           backgroundColor:
-            selected === title ? Colors.primary : Colors.secondary,
+            selected === title ? colors.primary : colors.secondary,
         },
       ]}
     >
@@ -22,7 +30,7 @@ export default function FilterButton({ title, selected }: FilterButtonProps) {
         style={[
           styles.title,
           {
-            color: selected === title ? Colors.white : Colors.textSecondary,
+            color: selected === title ? colors.white : colors.textSecondary,
           },
         ]}
       >

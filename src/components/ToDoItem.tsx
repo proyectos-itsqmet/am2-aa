@@ -1,37 +1,45 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Octicons } from "@expo/vector-icons";
-import { Colors } from "../constants/colors";
 import { ToDoType } from "../types/ToDoType";
+import { useTheme } from "../context/ThemeContext";
 
 interface ToDoItemProps {
   item: ToDoType;
+  onCompleteItem?: (item: ToDoType) => void;
 }
 
-export default function ToDoItem({ item }: ToDoItemProps) {
+export default function ToDoItem({ item, onCompleteItem }: ToDoItemProps) {
+  const { colors } = useTheme();
+
   return (
     <View
       style={[
         styles.container,
         {
-          backgroundColor: item.completed ? "#fdfdfd" : Colors.secondary,
-          borderColor: item.completed ? "#eeecec" : "#f0b0005d",
+          backgroundColor: item.completed
+            ? colors.background
+            : colors.secondary,
+          borderColor: item.completed ? colors.softGray : "#f0b0005d",
         },
       ]}
     >
-      <TouchableOpacity disabled={item.completed} onPress={() => {}}>
+      <TouchableOpacity
+        disabled={item.completed}
+        onPress={() => onCompleteItem?.(item)}
+      >
         {item.completed ? (
-          <Octicons name="check-circle-fill" size={24} color={Colors.green} />
+          <Octicons name="check-circle-fill" size={24} color={colors.green} />
         ) : (
-          <Octicons name="circle" size={24} color={Colors.softGray} />
+          <Octicons name="circle" size={24} color={colors.softGray} />
         )}
       </TouchableOpacity>
       <View>
         <Text
           style={{
             textDecorationLine: item.completed ? "line-through" : "none",
-            textDecorationColor: Colors.textSecondary,
-            color: item.completed ? Colors.textSecondary : Colors.textPrimary,
+            textDecorationColor: colors.textSecondary,
+            color: item.completed ? colors.textSecondary : colors.textPrimary,
             fontWeight: "400",
             fontSize: 16,
           }}
@@ -39,18 +47,18 @@ export default function ToDoItem({ item }: ToDoItemProps) {
           {item.title}
         </Text>
         <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
-          <Text style={{ color: Colors.textSecondary }}>
-            {item.createdAt.toLocaleDateString()}
+          <Text style={{ color: colors.textSecondary }}>
+            {new Date(item.createdAt).toISOString().split("T")[0]}
           </Text>
-          <Octicons name="dot-fill" size={12} color={Colors.textSecondary} />
+          <Octicons name="dot-fill" size={12} color={colors.textSecondary} />
           <Text
             style={{
               color:
                 item.priority === "Alta"
-                  ? Colors.red
+                  ? colors.red
                   : item.priority === "Media"
-                    ? Colors.orange
-                    : Colors.green,
+                    ? colors.orange
+                    : colors.green,
               fontWeight: "400",
             }}
           >

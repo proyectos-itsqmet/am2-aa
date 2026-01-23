@@ -3,13 +3,27 @@ import React from "react";
 import { FilterMenuOptions } from "../constants/filterMenu";
 import FilterButton from "./FilterButton";
 
-export default function FilterList() {
+interface FilterListProps {
+  selectedFilter: string;
+  onFilterChange: (filter: string) => void;
+}
+
+export default function FilterList({
+  selectedFilter,
+  onFilterChange,
+}: FilterListProps) {
   return (
     <FlatList
       data={FilterMenuOptions}
       horizontal={true}
       ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
-      renderItem={({ item }) => <FilterButton title={item} selected="Todas" />}
+      renderItem={({ item }) => (
+        <FilterButton
+          title={item}
+          selected={selectedFilter}
+          onPress={() => onFilterChange(item)}
+        />
+      )}
       style={styles.container}
     />
   );
